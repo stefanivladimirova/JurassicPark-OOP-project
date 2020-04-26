@@ -1,5 +1,5 @@
 #pragma once
-#include "Cage.h"
+#include "CageDinosaur.h"
 class Jurassic
 {
 	size_t fSize_cage;
