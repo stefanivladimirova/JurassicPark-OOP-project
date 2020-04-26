@@ -1,6 +1,7 @@
 #include "Jurassic.h"
 #include <iostream>
 #include <cstring>
+
 using namespace std;
 
 void Jurassic::resize_cage(size_t newCapacity_cage)
