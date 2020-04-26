@@ -10,6 +10,7 @@ int main() {
 		Jurassic food;
 		Cage cage1;
 
+
 		cout << "If you want to stop the program enter 1, if you want to keep going enter 0!" << endl;
 		cin >> num;
 		if (num == 1) {
