@@ -51,4 +51,7 @@ public:
 
 	//the last one checks if the climate is "Aerial"
 	bool check_climate_ae();
+
+	void serialize(ofstream& ofs) const;
+	void deserialize(ifstream& ifs);
 };

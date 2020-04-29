@@ -1,5 +1,6 @@
 #include "Jurassic.h"
 #include <iostream>
+#include <fstream>
 #include <cstring>
 
 using namespace std;
@@ -312,4 +313,82 @@ bool Jurassic::check_climate_ae()
 		}
 	}
 	return false;
+}
+
+void Jurassic::serialize(ofstream& ofs) const
+{
+	if (!ofs.is_open()) 
+	{
+		cout << "The file was not opened!" << endl;
+		return;
+	}
+	
+	//that is for the array of cages
+	ofs.write((const char*)&fSize_cage, sizeof(size_t));
+	ofs.write((const char*)&fCapacity_cage, sizeof(size_t));
+
+	for (size_t i = 0; i < fSize_cage; i++)
+	{
+		fCages[i].serialize(ofs);
+	}
+
+	//that is for the array of dinos
+	ofs.write((const char*)&fSize_dinos, sizeof(size_t));
+	ofs.write((const char*)&fCapacity_dinos, sizeof(size_t));
+
+	for (size_t i = 0; i < fSize_dinos; i++)
+	{
+		fDinos[i].serialize(ofs);
+	}
+
+	if (ofs.good())
+	{
+		cout << "Successful!" << endl;
+	}
+	else
+	{
+		cout << "Not successful!" << endl;
+	}
+}
+
+void Jurassic::deserialize(ifstream& ifs)
+{
+	if (!ifs.is_open())
+	{
+		cout << "the file was not opened!" << endl;
+		return;
+	}
+
+	//that is for the cages
+	ifs.read((char*)&fSize_cage, sizeof(size_t));
+	ifs.read((char*)&fCapacity_cage, sizeof(size_t));
+
+	//if we have cages already
+	delete[]fCages;
+	fCages = new Cage[fCapacity_cage];
+	for (size_t i = 0; i < fSize_cage; i++)
+	{
+		fCages[i].deserialize(ifs);
+	}
+
+	//that is for tha dinos
+	ifs.read((char*)&fSize_dinos, sizeof(size_t));
+	ifs.read((char*)&fCapacity_dinos, sizeof(size_t));
+
+	//if we have dinos already
+	delete[]fDinos;
+	fDinos = new Dino[fCapacity_dinos];
+	for (size_t i = 0; i < fSize_dinos; i++)
+	{
+		fDinos[i].deserialize(ifs);
+	}
+
+	if (ifs.good())
+	{
+		cout << "Successful!" << endl;
+	}
+	else
+	{
+		cout << "Not successful!" << endl;
+	}
 }
