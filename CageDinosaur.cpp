@@ -1,5 +1,6 @@
 #include "CageDinosaur.h"
 #include <cstring>
+#include <fstream>
 #include <iostream>
 using namespace std;
 
@@ -103,6 +104,131 @@ const char* Dinosaur::getEra() const
 const char* Dinosaur::getOrder() const
 {
 	return fOrder;
+}
+
+void Dinosaur::serialize(ofstream& ofs) const
+{
+	if (!ofs.is_open())
+	{
+		cout << "The file was not opened!" << endl;
+	}
+
+	//fName
+	size_t lenName = strlen(fName);
+	ofs.write((const char*)&lenName, sizeof(size_t));
+	ofs.write(fName, lenName);
+
+	//fSex
+	size_t lenSex = strlen(fSex);
+	ofs.write((const char*)&lenSex, sizeof(size_t));
+	ofs.write(fSex, lenSex);
+
+	//fTypename
+	size_t lenTypeName = strlen(fTypename);
+	ofs.write((const char*)&lenTypeName, sizeof(size_t));
+	ofs.write(fTypename, lenTypeName);
+	
+	//fEra
+	size_t lenEra = strlen(fEra);
+	ofs.write((const char*)&lenEra, sizeof(size_t));
+	ofs.write(fEra, lenEra);
+
+	//fFood
+	size_t lenFood = strlen(fFood);
+	ofs.write((const char*)&lenFood, sizeof(size_t));
+	ofs.write(fFood, lenFood);
+
+	//fOrder
+	size_t lenOrder = strlen(fOrder);
+	ofs.write((const char*)&lenOrder, sizeof(size_t));
+	ofs.write(fOrder, lenOrder);
+
+	if (ifs.good())
+	{
+		cout << "Successful!" << endl;
+	}
+	else
+	{
+		cout << "Not successful!" << endl;
+	}
+}
+
+void Dinosaur::deserialize(ifstream& ifs)
+{
+	if (!ifs.is_open()) 
+	{
+		cout << "The file was not opened!" << endl;
+		return;
+	}
+
+	//fName
+	size_t lenName = 0;
+	ifs.read((char*)&lenName, sizeof(size_t));
+	fName = new char[lenName + 1];
+	if (fName)
+	{
+		ifs.read(fName, lenName);
+		fName[lenName] = '\0';
+	}
+
+	//fSex
+	size_t lenSex = 0;
+	ifs.read((char*)&lenSex, sizeof(size_t));
+	fSex = new char[lenSex + 1];
+	if (fSex)
+	{
+		ifs.read(fSex, lenSex);
+		fSex[lenSex] = '\0';
+	}
+
+	//fTypename
+	size_t lenTypen_name = 0;
+	ifs.read((char*)&lenTypen_name, sizeof(size_t));
+	fTypename = new char[lenTypen_name + 1];
+	if (fTypename)
+	{
+		ifs.read(fTypename, lenTypen_name);
+		fTypename[lenTypen_name] = '\0';
+	}
+
+	//fEra
+	size_t lenEra = 0;
+	ifs.read((char*)&lenEra, sizeof(size_t));
+	fEra = new char[lenEra + 1];
+	if (fEra)
+	{
+		ifs.read(fEra, lenEra);
+		fEra[lenEra] = '\0';
+	}
+
+	//fFood
+	size_t lenFood = 0;
+	ifs.read((char*)&lenFood, sizeof(size_t));
+	fFood = new char[lenFood + 1];
+	if (fFood)
+	{
+		ifs.read(fFood, lenFood);
+		fFood[lenFood] = '\0';
+	}
+
+	//fOrder
+	size_t lenOrder = 0;
+	ifs.read((char*)&lenOrder, sizeof(size_t));
+	fOrder = new char[lenOrder + 1];
+	if (fOrder)
+	{
+		ifs.read(fOrder, lenOrder);
+		fOrder[lenOrder] = '\0';
+	}
+
+	if (ifs.good()) 
+	{
+		cout << "Successful!" << endl;
+	}
+	else
+	{
+		cout << "Not successful!" << endl;
+	}
 }
 
 Dinosaur::Dinosaur()
@@ -306,6 +432,72 @@ bool Cage::isValid_cage()
 const char* Cage::getClimate() const
 {
 	return fclimate;
+}
+
+void Cage::serialize(ofstream& ofs) const
+{
+	if (!ofs.is_open())
+	{
+		cout << "File was not opened" << endl;
+		return;
+	}
+
+	//fsize_cage
+	size_t lenSize = strlen(fsize_cage);
+	ofs.write((const char*)&lenSize, sizeof(size_t));
+	ofs.write(fsize_cage, lenSize);
+
+	//fclimate
+	size_t lenclimate = strlen(fclimate);
+	ofs.write((const char*)&lenclimate, sizeof(size_t));
+	ofs.write(fclimate, lenclimate);
+
+	if (ofs.good()) 
+	{
+		cout << "Successful!" << endl;
+	}
+	else
+	{
+		cout << "Error!" << endl;
+	}
+}
+
+void Cage::deserialize(ifstream& ifs)
+{
+	if (!ifs.is_open())
+	{
+		cout << "File was not opened" << endl;
+		return;
+	}
+
+	//fsize_cage
+	size_t lensize = 0;
+	ifs.read((char*)&lensize, sizeof(size_t));
+	fsize_cage = new char[lensize + 1];
+	if (fsize_cage)
+	{
+		ifs.read(fsize_cage, lensize);
+		fsize_cage[lensize] = '\0';
+	}
+
+	//fclimate
+	size_t lenclimate = 0;
+	ifs.read((char*)&lenclimate, sizeof(size_t));
+	fclimate = new char[lenclimate + 1];
+	if (fclimate)
+	{
+		ifs.read(fclimate, lenclimate);
+		fclimate[lenclimate] = '\0';
+	}
+
+	if (ifs.good())
+	{
+		cout << "Successful!" << endl;
+	}
+	else
+	{
+		cout << "Error!" << endl;
+	}
 }
 
 Cage::Cage()

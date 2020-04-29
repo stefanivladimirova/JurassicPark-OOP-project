@@ -25,6 +25,9 @@ public:
 
 	//I need that to check if the dino can live in a particular cage
 	const char* getClimate()const;
+
+	void serialize(ofstream& ofs) const;
+	void deserialize(ifstream& ifs);
 };
 
 class Dinosaur {
@@ -57,4 +60,7 @@ public:
 	//I need those for the validations from the dinos if they are from the same era and the same order
 	const char* getEra()const;
 	const char* getOrder()const;
+
+	void serialize(ofstream& ofs) const;
+	void deserialize(ifstream& ifs);
 };
