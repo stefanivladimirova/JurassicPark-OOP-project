@@ -1,16 +1,35 @@
 #include <iostream>
+#include "Cage.h"
+#include "Dinosaur.h"
 #include "Jurassic.h"
+
 using namespace std;
 
 int main() {
+	//NOTES
+
+	//counts how many dinos I have i particular cage
+			//TO DO getnumber na f_dino = 1
+			//za da go polzvam za counter
+			//za da proveryavam kolko dinos ima v a particular cage
+			//if we have space we can add a new dino
+			//BUT do the checks for the era climate and order
+
+			//fCages[number_of_cage].fDinos[i];//.getNumber koeto e ravno na 1
+
+			//counter+=fCages[number_of_cage].fDinos[i].getNumber();
+
+
+			//if count<MAX_DINO_SMALL_CAGE add dino
+			//but have to check for the climate, the era and the order
+
+
+
+
 	int num = 0;
 	int num1 = 0;
 	do
 	{
-		Jurassic food;
-		Cage cage1;
-
-
 		cout << "If you want to stop the program enter 1, if you want to keep going enter 0!" << endl;
 		cin >> num;
 		if (num == 1) {
@@ -65,7 +84,7 @@ int main() {
 			cout << "The food is not added to the storage of Jurassic park." << endl;
 		}
 		else {
-			food.add_food();
+
 		}
 	} while (num == 0);
 

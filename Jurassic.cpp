@@ -1,9 +1,82 @@
 #include "Jurassic.h"
+#include "Cage.h"
 #include <iostream>
-#include <fstream>
-#include <cstring>
-
 using namespace std;
+
+void Jurassic::addFood()
+{
+	cout << "Food was added to the Jurassic park." << endl;
+}
+
+const int START_CAPACITY = 16;
+//in the beginnig we have random number of cages 
+//so that's why we initialize capacity_cages in the default constructor = 16
+//I chose the number 16 because 2^4=16
+//it's like creating a container of cages and we gotta have an initial capacity
+
+Jurassic::Jurassic()
+{
+	init(0, START_CAPACITY);
+	fCages = new Cage[fCapacity_cage];
+}
+
+Jurassic::Jurassic(size_t size_cage, size_t capacity_cage)
+{
+	init(0, capacity_cage);
+	fCages = new Cage[fCapacity_cage];
+}
+
+Jurassic::~Jurassic()
+{
+	del();
+	cout << "Destructor called!" << endl;
+}
+
+Jurassic::Jurassic(const Jurassic& other)
+	:Jurassic()
+	//if it does not initialize the fields in the if statement, 
+	//then it will use the default constructor and we will not have a problem
+{
+	if (this != &other)
+	{
+		this->copyFrom(other);
+	}
+}
+
+Jurassic& Jurassic::operator=(const Jurassic& other)
+{
+	if (this != &other)
+	{
+		delete[]fCages;
+		this->copyFrom(other);
+	}
+	return *this;
+}
+
+void Jurassic::read()
+{
+	size_t size;
+	size_t capacity;
+	cout << "Enter the capacity of the cages: " << endl;
+	cin >> capacity;
+	for (size_t i = 0; i < capacity; i++)
+	{
+		fCages[i].read();
+	}
+	size = capacity;
+
+	init(size, capacity);
+}
+
+void Jurassic::print() const
+{
+	cout << "The number of the cages is: " << fSize_cage << endl;
+	cout << "The capacity of the cages is: " << fCapacity_cage << endl;
+	for (size_t i = 0; i < fSize_cage; i++)
+	{
+		fCages[i].print();
+	}
+}
 
 void Jurassic::resize_cage(size_t newCapacity_cage)
 {
@@ -27,27 +100,9 @@ void Jurassic::resize_cage(size_t newCapacity_cage)
 	}
 }
 
-void Jurassic::resize_dinos(size_t newCapacity_dinos)
-{
-	Dinosaur* buff_dinos = new (nothrow) Dinosaur[newCapacity_dinos];
-	//the same applies here
-
-	if (buff_dinos) {
-		for (size_t i = 0; i < fSize_dinos; i++)
-		{
-			buff_dinos[i] = fDinos[i];
-		}
-		delete[]fDinos;
-		fCapacity_dinos = newCapacity_dinos;
-		//fDinos will point at buff_dinos
-		fDinos = buff_dinos;
-		cout << "Resized!" << endl;
-	}
-	else
-	{
-		cout << "Not enough memory, can't do the task that you wanted!" << endl;
-	}
-}
+const int MAX_DINO_SMALL_CAGE = 1;
+const int MAX_DINO_MEDIUM_CAGE = 3;
+const int MAX_DINO_LARGE_CAGE = 10;
 
 void Jurassic::add_cage(const Cage& newCage)
 {
@@ -58,6 +113,7 @@ void Jurassic::add_cage(const Cage& newCage)
 		{
 			this->resize_cage(fCapacity_cage * 2);
 		}
+
 		fCages[fSize_cage] = newCage;
 		fSize_cage++;
 	}
@@ -67,262 +123,156 @@ void Jurassic::add_cage(const Cage& newCage)
 	}
 }
 
-void Jurassic::add_dinosaur(const Dinosaur& newDinos)
+void Jurassic::add_dino_to_the_cage(const Cage& cage, Dinosaur& dino)
 {
-	//we add the new dino to the first free posotuon after the last added element
-	if (fDinos->isValid_dinos())
+	unsigned int number_of_cage;
+	cout << "Where do you want to add a new dino?" << endl;
+	cin >> number_of_cage;
+	if (number_of_cage > Jurassic::fCapacity_cage)
 	{
-		if (fSize_dinos >= fCapacity_dinos)
+		cout << "Invalid number, try again!" << endl;
+	}
+
+	if (number_of_cage > fSize_cage)
+	{
+		fCages->read();
+		add_cage(cage);
+		fCages->print();
+	}
+
+	if (fCages->getSize() == "Small")
+	{
+		int counter_small = 0;
+		if (counter_small < 1 && counter_small >= 0)
 		{
-			this->resize_dinos(fCapacity_dinos * 2);
+			if (fCages[number_of_cage].getClimate() == "Terestrial" && dino.getOrder() == "Eats grass")
+			{
+				fCages[number_of_cage].addDinosaur(dino);
+			}
+			else if (fCages[number_of_cage].getClimate() == "Terestrial" && dino.getOrder() == "Eats meat")
+			{
+				fCages[number_of_cage].addDinosaur(dino);
+			}
+			else if (fCages[number_of_cage].getClimate() == "Aqueous" && dino.getOrder() == "It lives in the water")
+			{
+				fCages[number_of_cage].addDinosaur(dino);
+			}
+			else if (fCages[number_of_cage].getClimate() == "Aerial" && dino.getOrder() == "It flies")
+			{
+				fCages[number_of_cage].addDinosaur(dino);
+			}
+			else
+			{
+				add_cage(cage);
+			}
 		}
-		fDinos[fSize_dinos] = newDinos;
-		fSize_dinos++;
+		else
+		{
+			cout << "There is no place for new dinos in the cage because it is full!" << endl;
+		}
+	}
+	else if (fCages->getSize() == "Medium")
+	{
+		int counter_medium = 0;
+		for (size_t i = 0; i < MAX_DINO_MEDIUM_CAGE; i++)
+		{
+			if (counter_medium < MAX_DINO_MEDIUM_CAGE && counter_medium >= 0)
+			{
+				for (size_t i = 0; i < MAX_DINO_MEDIUM_CAGE; i++)
+				{
+					if (fCages[number_of_cage].fDinos[i].getEra() == dino.getEra() &&
+						fCages[number_of_cage].fDinos[i].getOrder() == dino.getOrder())
+					{
+						if (fCages[number_of_cage].getClimate() == "Terestrial" && dino.getOrder() == "Eats grass")
+						{
+							fCages[number_of_cage].addDinosaur(dino);
+						}
+						else if (fCages[number_of_cage].getClimate() == "Terestrial" && dino.getOrder() == "Eats meat")
+						{
+							fCages[number_of_cage].addDinosaur(dino);
+						}
+						else if (fCages[number_of_cage].getClimate() == "Aqueous" && dino.getOrder() == "It lives in the water")
+						{
+							fCages[number_of_cage].addDinosaur(dino);
+						}
+						else if (fCages[number_of_cage].getClimate() == "Aerial" && dino.getOrder() == "It flies")
+						{
+							fCages[number_of_cage].addDinosaur(dino);
+						}
+						else
+						{
+							add_cage(cage);
+						}
+					}
+					else
+					{
+						cout << "The dinos are not from the same era. The new dino can not be added to the cage." << endl;
+					}
+				}
+
+			}
+			else
+			{
+				cout << "There is no place for new dinos it the cage because it is full!" << endl;
+			}
+		}
+	}
+
+	else if (fCages->getSize() == "Large")
+	{
+		int counter_large = 0;
+		for (size_t i = 0; i < MAX_DINO_LARGE_CAGE; i++)
+		{
+			if (counter_large < MAX_DINO_LARGE_CAGE && counter_large >= 0)
+			{
+				for (size_t i = 0; i < MAX_DINO_LARGE_CAGE; i++)
+				{
+					if (fCages[number_of_cage].fDinos[i].getEra() == dino.getEra() &&
+						fCages[number_of_cage].fDinos[i].getOrder() == dino.getOrder())
+					{
+						if (fCages[number_of_cage].getClimate() == "Terestrial" && dino.getOrder() == "Eats grass")
+						{
+							fCages[number_of_cage].addDinosaur(dino);
+						}
+						else if (fCages[number_of_cage].getClimate() == "Terestrial" && dino.getOrder() == "Eats meat")
+						{
+							fCages[number_of_cage].addDinosaur(dino);
+						}
+						else if (fCages[number_of_cage].getClimate() == "Aqueous" && dino.getOrder() == "It lives in the water")
+						{
+							fCages[number_of_cage].addDinosaur(dino);
+						}
+						else if (fCages[number_of_cage].getClimate() == "Aerial" && dino.getOrder() == "It flies")
+						{
+							fCages[number_of_cage].addDinosaur(dino);
+						}
+						else
+						{
+							add_cage(cage);
+						}
+					}
+				}
+			}
+			else
+			{
+				cout << "There is no place for new dinos it the cage because it is full!" << endl;
+			}
+		}
 	}
 	else
 	{
-		cout << "The dino is not valid and can't be added to Jurassic park!" << endl;
+		cout << "The size of the cage is invalid!" << endl;
 	}
-}
-
-void Jurassic::remove()
-{
-	for (int i = 0; i < fSize_dinos; i++)
-	{
-		for (int j = i; j < fSize_dinos - 1; j++)
-		{
-			fDinos[i] = fDinos[j];
-		}
-		--fSize_dinos;
-	}
-	cout << "Dinosaur is removed from the cage!" << endl;
-
-}
-
-void Jurassic::add_food()
-{
-	cout << "Food is added to the storage!" << endl;
-}
-
-//in the beginnig we have random number of cages 
-//so that's why we initialize capacity_cages in the default constructor = 8
-//I chose the number 8 because 8=2^3
-//it's like creating a container of cages and we gotta have an initial capacity
-
-const int EMPTY = 0;
-const int START_CAPACITY = 8;
-
-Jurassic::Jurassic()
-{
-	initialize(EMPTY, START_CAPACITY, EMPTY, EMPTY);
-	fCages = new Cage[fCapacity_cage];
-	fDinos = nullptr;
-}
-
-Jurassic::Jurassic(size_t size_cage, size_t capacity_cage, size_t size_dinos, size_t capacity_dinos)
-{
-	initialize(EMPTY, capacity_cage, size_dinos, capacity_dinos);
-	fCages = new Cage[fCapacity_cage];
-	fDinos = new Dinosaur[fCapacity_dinos];
-}
-
-void Jurassic::initialize(size_t size_cage, size_t capacity_cage, size_t size_dinos, size_t capacity_dinos)
-{
-	if (size_cage)
-	{
-		fSize_cage = size_cage;
-	}
-	if (capacity_cage)
-	{
-		fCapacity_cage = capacity_cage;
-	}
-	if (size_dinos)
-	{
-		fSize_dinos = size_dinos;
-	}
-	if (capacity_dinos)
-	{
-		fCapacity_dinos = capacity_dinos;
-	}
-}
-
-Jurassic::Jurassic(const Jurassic& other)
-	:Jurassic()
-	//if it does not initialize the fields in the if statement, then it will use the default constructor and we will not have a problem
-{
-	if (this != &other)
-	{
-		this->copyFrom_Jurassic(other);
-	}
-}
-
-Jurassic& Jurassic::operator=(const Jurassic& other)
-{
-	if (this != &other)
-	{
-		delete[]fCages;
-		delete[]fDinos;
-		this->copyFrom_Jurassic(other);
-	}
-	return *this;
-}
-
-void Jurassic::copyFrom_Jurassic(const Jurassic& other)
-{
-	//the cages
-	fSize_cage = other.fSize_cage;
-	fCapacity_cage = other.fCapacity_cage;
-
-	fCages = new Cage[other.fCapacity_cage];
-
-	//here we copy the cages that we have info for them, not the default cages
-	//we just don't want to cpy default cages
-	for (size_t i = 0; i < other.fSize_cage; i++)
-	{
-		fCages[i] = other.fCages[i];
-	}
-
-	//the dinos
-	fSize_dinos = other.fSize_dinos;
-	fCapacity_dinos = other.fCapacity_dinos;
-
-	fDinos = new Dinosaur[other.fCapacity_dinos];
-
-	//here applies the same thing but for the dinos
-	for (size_t i = 0; i < other.fSize_dinos; i++)
-	{
-		fDinos[i] = other.fDinos[i];
-	}
-}
-
-Jurassic::~Jurassic()
-{
-	delete[]fCages;
-	delete[]fDinos;
-	cout << "Destructor called!" << endl;
-}
-
-void Jurassic::print_Jurassic()const
-{
-	cout << "The number of the cages is: " << fSize_cage << endl;
-	cout << "The capacity of the cages is: " << fCapacity_cage << endl;
-	for (size_t i = 0; i < fSize_cage; i++)
-	{
-		fCages[i].print();
-	}
-
-	cout << "The number of the dinos is: " << fSize_dinos << endl;
-	cout << "The capacuty of the dinos is: " << fCapacity_dinos << endl;
-	for (size_t i = 0; i < fSize_dinos; i++)
-	{
-		fDinos[i].print_dino();
-	}
-}
-
-void Jurassic::readFromConsole() {
-	cout << "Enter the capacity of the cages: " << endl;
-	cin >> fCapacity_cage;
-	for (size_t i = 0; i < fCapacity_cage; i++)
-	{
-		fCages[i].read();
-	}
-	fSize_cage = fCapacity_cage;
-
-	cout << "Enter the capacity of the dinos: " << endl;
-	cin >> fCapacity_dinos;
-	for (size_t i = 0; i < fCapacity_dinos; i++)
-	{
-		fDinos[i].read();
-	}
-	fSize_dinos = fCapacity_dinos;
-}
-
-//checks if the dinos are from the same era
-
-bool Jurassic::valid_dino()
-{
-	for (size_t i = 0; i < fSize_dinos - 1; i++)
-	{
-		for (size_t j = 1; j < fSize_dinos; j++)
-		{
-			if (fDinos[i].getEra() == fDinos[j].getEra())
-			{
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-//checks if the dinos are from the same order
-bool Jurassic::valid_dino2()
-{
-	for (size_t i = 0; i < fSize_dinos - 1; i++)
-	{
-		for (size_t j = 1; j < fSize_dinos; j++)
-		{
-			if (fDinos[i].getOrder() == fDinos[j].getOrder())
-			{
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-bool Jurassic::check_climate()
-{
-	if (fCages->getClimate() == "Terrestrial")
-	{
-		for (size_t i = 0; i < fSize_dinos; i++)
-		{
-			if (fDinos[i].getOrder() == "Eats grass" || fDinos[i].getOrder() == "Eats meat")
-			{
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-bool Jurassic::check_climate_aq()
-{
-	if (fCages->getClimate() == "Aqueous")
-	{
-		for (size_t i = 0; i < fSize_dinos; i++)
-		{
-			if (fDinos[i].getOrder() == "It lives in the water")
-			{
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-bool Jurassic::check_climate_ae()
-{
-	if (fCages->getClimate() == "Aerial")
-	{
-		for (size_t i = 0; i < fSize_dinos; i++)
-		{
-			if (fDinos[i].getOrder() == "It flies")
-			{
-				return true;
-			}
-		}
-	}
-	return false;
 }
 
 void Jurassic::serialize(ofstream& ofs) const
 {
-	if (!ofs.is_open()) 
+	if (!ofs.is_open())
 	{
 		cout << "The file was not opened!" << endl;
 		return;
 	}
-	
+
 	//that is for the array of cages
 	ofs.write((const char*)&fSize_cage, sizeof(size_t));
 	ofs.write((const char*)&fCapacity_cage, sizeof(size_t));
@@ -330,15 +280,6 @@ void Jurassic::serialize(ofstream& ofs) const
 	for (size_t i = 0; i < fSize_cage; i++)
 	{
 		fCages[i].serialize(ofs);
-	}
-
-	//that is for the array of dinos
-	ofs.write((const char*)&fSize_dinos, sizeof(size_t));
-	ofs.write((const char*)&fCapacity_dinos, sizeof(size_t));
-
-	for (size_t i = 0; i < fSize_dinos; i++)
-	{
-		fDinos[i].serialize(ofs);
 	}
 
 	if (ofs.good())
@@ -371,18 +312,6 @@ void Jurassic::deserialize(ifstream& ifs)
 		fCages[i].deserialize(ifs);
 	}
 
-	//that is for tha dinos
-	ifs.read((char*)&fSize_dinos, sizeof(size_t));
-	ifs.read((char*)&fCapacity_dinos, sizeof(size_t));
-
-	//if we have dinos already
-	delete[]fDinos;
-	fDinos = new Dino[fCapacity_dinos];
-	for (size_t i = 0; i < fSize_dinos; i++)
-	{
-		fDinos[i].deserialize(ifs);
-	}
-
 	if (ifs.good())
 	{
 		cout << "Successful!" << endl;
@@ -390,5 +319,49 @@ void Jurassic::deserialize(ifstream& ifs)
 	else
 	{
 		cout << "Not successful!" << endl;
+	}
+}
+
+void Jurassic::del()
+{
+	delete[]fCages;
+}
+
+void Jurassic::init(size_t size_cage, size_t capacity_cage)
+{
+	if (size_cage)
+	{
+		fSize_cage = size_cage;
+	}
+	else
+	{
+		fSize_cage = 0;
+		cout << "Invalid!" << endl;
+	}
+
+	if (capacity_cage)
+	{
+		fCapacity_cage = capacity_cage;
+	}
+	else
+	{
+		fCapacity_cage = 0;
+		cout << "Invalid!" << endl;
+	}
+}
+
+void Jurassic::copyFrom(const Jurassic& other)
+{
+	//the cages
+	fSize_cage = other.fSize_cage;
+	fCapacity_cage = other.fCapacity_cage;
+
+	fCages = new Cage[other.fCapacity_cage];
+
+	//here we copy the cages that we have info for them, not the default cages
+	//we just don't want to cpy default cages
+	for (size_t i = 0; i < other.fSize_cage; i++)
+	{
+		fCages[i] = other.fCages[i];
 	}
 }

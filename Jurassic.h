@@ -1,57 +1,48 @@
 #pragma once
-#include "CageDinosaur.h"
+#include "Cage.h"
+#include "Dinosaur.h"
+#include <fstream>
+using namespace std;
+
 class Jurassic
 {
-	size_t fSize_cage;
-	size_t fCapacity_cage;
-
-	size_t fSize_dinos;
-	size_t fCapacity_dinos;
-
-	Cage* fCages;
-	Dinosaur* fDinos;
-
-	void resize_cage(size_t newCapacity_cage);
-	void resize_dinos(size_t newCapacity_dinos);
-
 public:
-	void add_cage(const Cage& newCage);
-	void add_dinosaur(const Dinosaur& newDinos);
-
-	void remove();
-
-	void add_food();
-
+	Cage* fCages;
+	void addFood();
 	Jurassic();
-	Jurassic(size_t, size_t, size_t, size_t);
-	void initialize(size_t, size_t, size_t, size_t);
-
+	Jurassic(size_t, size_t);
+	~Jurassic();
 	Jurassic(const Jurassic& other);
 	Jurassic& operator=(const Jurassic& other);
 
-	void copyFrom_Jurassic(const Jurassic& other);
-	~Jurassic();
+	void read();
+	void print()const;
 
-	void print_Jurassic()const;
-	void readFromConsole();
-
-	//validates if the dinos are from the same era
-	bool valid_dino();
-
-	//validates if the dinos are from the same order
-	bool valid_dino2();
+	void resize_cage(size_t newCapacity_cage);
+	void add_cage(const Cage& newCage);
+	void add_dino_to_the_cage(const Cage& cage, Dinosaur& dino);
 
 	//check if the dino/dinos can live in a particular climate cage
 	//dedided to make them in different methods cause it is easier for me
 	//the first one checks when the climate is "Terrestrial"
-	bool check_climate();
 
+public:
+	//bool check_climate();
 	//the next one checks if the climate is "Aqueous"
-	bool check_climate_aq();
-
+	//bool check_climate_aq();
 	//the last one checks if the climate is "Aerial"
-	bool check_climate_ae();
+	//bool check_climate_ae();
 
 	void serialize(ofstream& ofs) const;
 	void deserialize(ifstream& ifs);
+
+private:
+	void del();
+	void init(size_t size_cage, size_t capacity_cage);
+	void copyFrom(const Jurassic& other);
+
+private:
+	size_t fSize_cage;
+	size_t fCapacity_cage;
 };
+

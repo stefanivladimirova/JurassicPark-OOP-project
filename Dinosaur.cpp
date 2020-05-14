@@ -1,12 +1,11 @@
-#include "CageDinosaur.h"
+#include "Dinosaur.h"
 #include <cstring>
-#include <fstream>
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 const int MAX = 50;
 const int MAX_SEX = 7;
-const int MAX_SIZE = 15;
 
 void Dinosaur::read()
 {
@@ -77,7 +76,7 @@ void Dinosaur::read()
 
 }
 
-void Dinosaur::print_dino()
+void Dinosaur::print_dino()const
 {
 	cout << "The name of the dinosaur is: " << fName << endl;
 	cout << "The sex of the dinosaur is: " << fSex << endl;
@@ -127,7 +126,7 @@ void Dinosaur::serialize(ofstream& ofs) const
 	size_t lenTypeName = strlen(fTypename);
 	ofs.write((const char*)&lenTypeName, sizeof(size_t));
 	ofs.write(fTypename, lenTypeName);
-	
+
 	//fEra
 	size_t lenEra = strlen(fEra);
 	ofs.write((const char*)&lenEra, sizeof(size_t));
@@ -143,7 +142,7 @@ void Dinosaur::serialize(ofstream& ofs) const
 	ofs.write((const char*)&lenOrder, sizeof(size_t));
 	ofs.write(fOrder, lenOrder);
 
-	if (ifs.good())
+	if (ofs.good())
 	{
 		cout << "Successful!" << endl;
 	}
@@ -155,7 +154,7 @@ void Dinosaur::serialize(ofstream& ofs) const
 
 void Dinosaur::deserialize(ifstream& ifs)
 {
-	if (!ifs.is_open()) 
+	if (!ifs.is_open())
 	{
 		cout << "The file was not opened!" << endl;
 		return;
@@ -221,7 +220,7 @@ void Dinosaur::deserialize(ifstream& ifs)
 		fOrder[lenOrder] = '\0';
 	}
 
-	if (ifs.good()) 
+	if (ifs.good())
 	{
 		cout << "Successful!" << endl;
 	}
@@ -369,200 +368,5 @@ Dinosaur::Dinosaur(const Dinosaur& other)
 	if (this != &other)
 	{
 		copyFrom(other);
-	}
-}
-
-Cage::~Cage()
-{
-	cout << "Destructor called!" << endl;
-	del_cage();
-}
-
-void Cage::del_cage()
-{
-	delete[]fsize_cage;
-	delete[]fclimate;
-}
-
-void Cage::read()
-{
-	char size_cage[MAX_SIZE];
-	char climate[MAX];
-
-	cout << "Enter the size of the cage (Small, Medium, Large): " << endl;
-	cin.getline(size_cage, MAX_SIZE);
-	if (strcmp(size_cage, "Small") == 0 || strcmp(size_cage, "Medium") == 0 || strcmp(size_cage, "Large") == 0)
-	{
-		cout << "The cages is: " << size_cage << endl;
-	}
-	else
-	{
-		cout << "Invalid!" << endl;
-	}
-
-	cout << "Enter the climate of the cage(Terrestrial, Aerial, Aqueous): " << endl;
-	cin.getline(climate, MAX);
-	if (strcmp(climate, "Terrestrial") == 0 || strcmp(climate, "Aerial") == 0 || strcmp(climate, "Aqueous") == 0)
-	{
-		cout << "The climate is: " << climate << endl;
-	}
-	else
-	{
-		cout << "Invalid!" << endl;
-	}
-
-	init_cage(size_cage, climate);
-}
-
-void Cage::print()
-{
-	cout << "The size of the cage is: " << fsize_cage << endl;
-	cout << "The climate of the cage is: " << fclimate << endl;
-}
-
-bool Cage::isValid_cage()
-{
-	if (strcmp(fsize_cage, "") == 0 || strcmp(fclimate, "") == 0)
-	{
-		return false;
-	}
-	return true;
-}
-
-const char* Cage::getClimate() const
-{
-	return fclimate;
-}
-
-void Cage::serialize(ofstream& ofs) const
-{
-	if (!ofs.is_open())
-	{
-		cout << "File was not opened" << endl;
-		return;
-	}
-
-	//fsize_cage
-	size_t lenSize = strlen(fsize_cage);
-	ofs.write((const char*)&lenSize, sizeof(size_t));
-	ofs.write(fsize_cage, lenSize);
-
-	//fclimate
-	size_t lenclimate = strlen(fclimate);
-	ofs.write((const char*)&lenclimate, sizeof(size_t));
-	ofs.write(fclimate, lenclimate);
-
-	if (ofs.good()) 
-	{
-		cout << "Successful!" << endl;
-	}
-	else
-	{
-		cout << "Error!" << endl;
-	}
-}
-
-void Cage::deserialize(ifstream& ifs)
-{
-	if (!ifs.is_open())
-	{
-		cout << "File was not opened" << endl;
-		return;
-	}
-
-	//fsize_cage
-	size_t lensize = 0;
-	ifs.read((char*)&lensize, sizeof(size_t));
-	fsize_cage = new char[lensize + 1];
-	if (fsize_cage)
-	{
-		ifs.read(fsize_cage, lensize);
-		fsize_cage[lensize] = '\0';
-	}
-
-	//fclimate
-	size_t lenclimate = 0;
-	ifs.read((char*)&lenclimate, sizeof(size_t));
-	fclimate = new char[lenclimate + 1];
-	if (fclimate)
-	{
-		ifs.read(fclimate, lenclimate);
-		fclimate[lenclimate] = '\0';
-	}
-
-	if (ifs.good())
-	{
-		cout << "Successful!" << endl;
-	}
-	else
-	{
-		cout << "Error!" << endl;
-	}
-}
-
-Cage::Cage()
-{
-	init_cage("", "");
-}
-
-Cage::Cage(const char* size_cage, const char* climate)
-{
-	init_cage(size_cage, climate);
-}
-
-void Cage::init_cage(const char* size_cage, const char* climate)
-{
-	if (size_cage)
-	{
-		fsize_cage = new char[strlen(size_cage) + 1];
-		strcpy(fsize_cage, size_cage);
-	}
-	else
-	{
-		strcpy(fsize_cage, "");
-	}
-
-
-	if (climate)
-	{
-		fclimate = new char[strlen(climate) + 1];
-		strcpy(fclimate, climate);
-	}
-	else
-	{
-		strcpy(fclimate, "");
-	}
-
-}
-
-Cage& Cage::operator=(const Cage& other)
-{
-	if (this != &other)
-	{
-		delete[] fsize_cage;
-		delete[] fclimate;
-
-		this->copyFrom_cage(other);
-
-	}
-	return*this;
-}
-
-void Cage::copyFrom_cage(const Cage& other)
-{
-	fsize_cage = new char[strlen(other.fsize_cage) + 1];
-	strcpy(fsize_cage, other.fsize_cage);
-
-	fclimate = new char[strlen(other.fclimate) + 1];
-	strcpy(fclimate, other.fclimate);
-}
-
-Cage::Cage(const Cage& other)
-	:Cage()
-	//if it does not initialize the fields in the if statement, then it will use the default constructor and we will not have a problem
-{
-	if (this != &other)
-	{
-		copyFrom_cage(other);
 	}
 }
